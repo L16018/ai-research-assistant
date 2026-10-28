@@ -1,21 +1,70 @@
-def get_answer(question):
-    """暂时模拟回答，之后替换为真实的 API 调用。"""
-    return f"你提出的问题是：{question}\n目前还没有连接 AI API。"
+
+import requests
+import re
+import html
+
+
+def search_wikipedia(keyword):
+    """Search Wikipedia for relevant articles."""
+
+    url = "https://en.wikipedia.org/w/api.php"
+
+    params = {
+        "action": "query",
+        "list": "search",
+        "srsearch": keyword,
+        "format": "json",
+        "srlimit": 3
+    }
+
+    headers = {
+        "User-Agent": "AIResearchAssistant/0.1"
+    }
+
+    response = requests.get(
+        url,
+        params=params,
+        headers=headers,
+        timeout=10
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    return data.get("query", {}).get("search", [])
 
 
 def main():
-    question = input("请输入你想研究的问题：")
+    keyword = input("请输入你想研究的主题：").strip()
 
-    if not question.strip():
-        print("问题不能为空！")
+    if not keyword:
+        print("研究主题不能为空！")
         return
-    print(f"你提出的问题是：{question}")
-    print("项目版本：0.2")
-    print("下一步：接入大模型 API。")
 
-    answer = get_answer(question)
-    print("\n研究结果：")
-    print(answer)
+    try:
+        results = search_wikipedia(keyword)
+
+        if not results:
+            print("没有找到相关资料。")
+            return
+
+        print(f"\n关于“{keyword}”的搜索结果：\n")
+
+        for index, item in enumerate(results, start=1):
+            title = item.get("title", "")
+            snippet = item.get("snippet", "")
+
+            snippet = html.unescape(
+                re.sub(r"<.*?>", "", snippet)
+            )
+
+            print(f"{index}. {title}")
+            print(f"   {snippet}\n")
+
+    except requests.RequestException as error:
+        print("请求失败，请检查网络连接。")
+        print("错误信息：", error)
 
 
 if __name__ == "__main__":
