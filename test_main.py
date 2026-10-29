@@ -1,5 +1,6 @@
 
 import unittest
+import requests
 from unittest.mock import patch, Mock
 
 from main import search_wikipedia
@@ -34,6 +35,18 @@ class TestWikipediaSearch(unittest.TestCase):
         # 检查是否发送了 HTTP 请求
         mock_get.assert_called_once()
 
+    @patch("main.requests.get")
+    def test_search_raises_http_error(self, mock_get):
+        mock_response = Mock()
+
+        mock_response.raise_for_status.side_effect = (
+            requests.HTTPError("Server error")
+        )
+
+        mock_get.return_value = mock_response
+
+        with self.assertRaises(requests.HTTPError):
+            search_wikipedia("Python")
 
 if __name__ == "__main__":
     unittest.main()
