@@ -1,24 +1,26 @@
 # AI Research Assistant
 
-A beginner Python project for learning API integration
-and Git version control.
+A Python-based web application for searching
+research materials using Wikipedia.
 
 ## Features
 
-- Accept user input from the terminal
-- Send HTTP GET and POST requests
-- Parse JSON responses
-- Handle basic request errors
+- Search Wikipedia by topic
+- Display article titles and summaries
+- Provide links to original articles
+- Handle empty inputs and request errors
 
 ## Tech Stack
 
 - Python
+- Streamlit
 - Requests
-- Git
+- Wikipedia API
+- Git and GitHub
 
 ## Installation
 
-Install the dependencies:
+Install dependencies:
 
 ```bash
 python -m pip install -r requirements.txt
